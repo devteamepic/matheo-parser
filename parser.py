@@ -59,6 +59,8 @@ def parse(page_num):
         with open(f"{DOWNLOADS}/data.csv", 'a') as doc:
             print(doc)
         #  fd.write(myCsvRow)
+    else:
+        print('failed to download thesis, falling back to next page')
 
     # iterate forward
     # if page_num < 7888:
