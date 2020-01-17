@@ -43,7 +43,7 @@ def append_row(dict_rows, csv_path=f"{DOWNLOADS}/data.csv"):
         print('I/O Error occurred')
 
 
-def parse(page_num):
+def parse(page_num, dict):
     page = urlopen(f"https://matheo.uliege.be/handle/2268.2/{page_num}")
     soup = BeautifulSoup(page, 'html.parser')
     has_access = False
@@ -64,27 +64,40 @@ def parse(page_num):
 
             # mark to continue parsing
             has_access = True
+            dict['Page'] = page_num
+            dict['Author'] = person_name
 
     # extract metadata about master thesis if thesis is open to view
     if has_access:
         # parse metadata
         labels = soup.find_all('td', {'class': 'metadataFieldLabel'})
         values = soup.find_all('td', {'class': 'metadataFieldValue'})
+
         for metadata in list(zip(labels, values)):
-            print(f"{metadata[0].get_text().strip()} - {metadata[-1].get_text().strip()}")
+            label = metadata[0].get_text().replace(':', '').strip()
+            value = metadata[-1].get_text().strip()
+            dict[label] = value
+            print(f"{label} - {value}")
 
         # parse statistics
         for li in soup.find('div', {'id': 'statistics'}).ul.find_all('li'):
-            print(''.join(e.strip() for e in re.split(r'\d+', li.get_text())), li.span.get_text())
+            label = ''.join(e.strip() for e in re.split(r'\d+', li.get_text()))
+            value = li.span.get_text()
+            dict[label] = value
+            print(f"{label} - {value}")
 
         # parse abstract
-        print(soup.find('div', {'id': 'abstract'}).p.get_text())
+        abstract = soup.find('div', {'id': 'abstract'}).p.get_text()
+        dict['Abstract'] = abstract
+        print(abstract)
+        grouped_dicts.append(dict)
     else:
         print('failed to download thesis, falling back to next page')
 
     # iterate forward
     # if page_num < 7888:
-    #     parse(page_num+1)
+    #     parse(page_num+1, dict_arr)
+    # else:
 
 
 if not os.path.exists(f"{DOWNLOADS}/data.csv"):
@@ -95,4 +108,7 @@ if not os.path.exists(f"{DOWNLOADS}/data.csv"):
             writer.writeheader()
     except IOError:
         print('I/O Error occurred')
-parse(1815)
+
+grouped_dicts = []
+parse(6800, {})
+append_row(grouped_dicts)
