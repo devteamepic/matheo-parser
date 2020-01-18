@@ -117,7 +117,7 @@ def parse(page_num, dict):
 
     # iterate forward
     if page_num < 8500:
-        parse(page_num+1, [])
+        parse(page_num+1, {})
 
 
 if not os.path.exists(f"{DOWNLOADS}/data.csv"):
