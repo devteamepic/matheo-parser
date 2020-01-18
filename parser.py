@@ -116,7 +116,7 @@ def parse(page_num, dict):
         print('failed to download thesis, falling back to next page')
 
     # iterate forward
-    if page_num < 7888:
+    if page_num < 8500:
         parse(page_num+1, [])
 
 
@@ -130,5 +130,5 @@ if not os.path.exists(f"{DOWNLOADS}/data.csv"):
         print('I/O Error occurred')
 
 grouped_dicts = []
-parse(6800, {})
+parse(1100, {})
 append_row(new_data(grouped_dicts))
