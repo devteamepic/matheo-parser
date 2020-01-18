@@ -31,9 +31,30 @@ def create_file(path=f"{DOWNLOADS}/data.csv"):
         open(path, 'w+')
 
 
+def new_data(dict_array, csv_path=f"{DOWNLOADS}/data.csv"):
+    try:
+        with open(csv_path, 'r') as csv_doc:
+            csv_reader = csv.reader(csv_doc)
+
+            written_pages = []
+            for row in csv_reader:
+                if row[0] != 'Page':
+                    written_pages.append(row[0])
+
+        new_entries = []
+        for data in dict_array:
+            if str(data['Page']) not in written_pages:
+                new_entries.append(data)
+
+        return new_entries
+    except IOError:
+        print('IOError occurred while reading csv file')
+
+
 def append_row(dict_rows, csv_path=f"{DOWNLOADS}/data.csv"):
     try:
         with open(csv_path, 'a') as csv_doc:
+
             csv_writer = csv.DictWriter(csv_doc, fieldnames=COLUMN_NAMES)
 
             for data in dict_rows:
@@ -77,27 +98,26 @@ def parse(page_num, dict):
             label = metadata[0].get_text().replace(':', '').strip()
             value = metadata[-1].get_text().strip()
             dict[label] = value
-            print(f"{label} - {value}")
+            # print(f"{label} - {value}")
 
         # parse statistics
         for li in soup.find('div', {'id': 'statistics'}).ul.find_all('li'):
             label = ''.join(e.strip() for e in re.split(r'\d+', li.get_text()))
             value = li.span.get_text()
             dict[label] = value
-            print(f"{label} - {value}")
+            # print(f"{label} - {value}")
 
         # parse abstract
         abstract = soup.find('div', {'id': 'abstract'}).p.get_text()
         dict['Abstract'] = abstract
-        print(abstract)
+        # print(abstract)
         grouped_dicts.append(dict)
     else:
         print('failed to download thesis, falling back to next page')
 
     # iterate forward
-    # if page_num < 7888:
-    #     parse(page_num+1, dict_arr)
-    # else:
+    if page_num < 7888:
+        parse(page_num+1, [])
 
 
 if not os.path.exists(f"{DOWNLOADS}/data.csv"):
@@ -111,4 +131,4 @@ if not os.path.exists(f"{DOWNLOADS}/data.csv"):
 
 grouped_dicts = []
 parse(6800, {})
-append_row(grouped_dicts)
+append_row(new_data(grouped_dicts))
