@@ -1,4 +1,5 @@
 from urllib.request import urlopen
+from urllib.error import URLError
 from bs4 import BeautifulSoup
 import os
 import requests
@@ -65,7 +66,15 @@ def append_row(dict_rows, csv_path=f"{DOWNLOADS}/data.csv"):
 
 
 def parse(page_num, dict):
-    page = urlopen(f"https://matheo.uliege.be/handle/2268.2/{page_num}")
+    try:
+        page = urlopen(f"https://matheo.uliege.be/handle/2268.2/{page_num}")
+    except URLError:
+        print("Something went wrong. falling back to the next page")
+        if page_num < 8500:
+            return parse(page_num + 1, {})
+        else:
+            return
+
     soup = BeautifulSoup(page, 'html.parser')
     has_access = False
 
@@ -130,5 +139,5 @@ if not os.path.exists(f"{DOWNLOADS}/data.csv"):
         print('I/O Error occurred')
 
 grouped_dicts = []
-parse(1100, {})
+parse(1113, {})
 append_row(new_data(grouped_dicts))
