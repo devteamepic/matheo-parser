@@ -114,9 +114,10 @@ def parse(page_num, dict):
             # print(f"{label} - {value}")
 
         # parse abstract
-        abstract = soup.find('div', {'id': 'abstract'}).p.get_text()
-        dict['Abstract'] = abstract
-        # print(abstract)
+        abstract = soup.find('div', {'id': 'abstract'}).p
+        if abstract is not None:
+            dict['Abstract'] = abstract.get_text()
+
         grouped_dicts.append(dict)
     else:
         print('failed to download thesis, falling back to next page')
