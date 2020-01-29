@@ -70,10 +70,7 @@ def parse(page_num, dict):
         page = urlopen(f"https://matheo.uliege.be/handle/2268.2/{page_num}")
     except URLError:
         print("Something went wrong. falling back to the next page")
-        if page_num < 8500:
-            return parse(page_num + 1, {})
-        else:
-            return
+        return
 
     soup = BeautifulSoup(page, 'html.parser')
     has_access = False
@@ -123,10 +120,20 @@ def parse(page_num, dict):
         grouped_dicts.append(dict)
     else:
         print('failed to download thesis, falling back to next page')
+        # iterate forward
 
-    # iterate forward
+
+def iterate_recursive(page_num):
     if page_num < 8500:
-        parse(page_num+1, {})
+        parse(page_num, {})
+        iterate_recursive(page_num+1)
+
+
+def iterate(page_num, counter=0):
+    while counter < 8500:
+        parse(page_num, {})
+        page_num += 1
+        counter += 1
 
 
 if not os.path.exists(f"{DOWNLOADS}/data.csv"):
@@ -138,6 +145,7 @@ if not os.path.exists(f"{DOWNLOADS}/data.csv"):
     except IOError:
         print('I/O Error occurred')
 
+# counter = 0
 grouped_dicts = []
-parse(1113, {})
+iterate(1113)
 append_row(new_data(grouped_dicts))
