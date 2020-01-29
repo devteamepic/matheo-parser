@@ -129,11 +129,10 @@ def iterate_recursive(page_num):
         iterate_recursive(page_num+1)
 
 
-def iterate(page_num, counter=0):
-    while counter < 8500:
+def iterate(page_num):
+    while page_num <= 8500:
         parse(page_num, {})
         page_num += 1
-        counter += 1
 
 
 if not os.path.exists(f"{DOWNLOADS}/data.csv"):
