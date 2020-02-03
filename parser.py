@@ -9,7 +9,8 @@ import re
 DOWNLOADS = 'downloads'
 COLUMN_NAMES = ['Page', 'Title', 'Translated title', 'Date of defense', 'Advisor(s)',
                 "Committee's member(s)", 'Funders', 'Author', 'Language', 'Number of pages',
-                'Keywords', 'Target public', 'Discipline(s)', 'Institution(s)', 'Degree', 'Faculty',
+                'Keywords', 'Name of the research project', 'Research unit', 'Target public',
+                'Discipline(s)', 'Institution(s)', 'Degree', 'Faculty', 'Commentary', 'Complementary URL',
                 'Total number of views', 'Total number of downloads', 'Abstract']
 
 
@@ -59,10 +60,16 @@ def append_row(dict_rows, csv_path=f"{DOWNLOADS}/data.csv"):
             csv_writer = csv.DictWriter(csv_doc, fieldnames=COLUMN_NAMES)
 
             for data in dict_rows:
-                csv_writer.writerow(data)
+                try:
+                    csv_writer.writerow(data)
+                except ValueError:
+                    print('ValueError')
+                    print(data)
 
     except IOError:
         print('I/O Error occurred')
+
+
 
 
 def parse(page_num, dict):
