@@ -17,6 +17,6 @@ def pct_more_than_1(pct):
     return ('%1.f%%' % pct) if pct > 1 else ''
 
 df['Discipline(s)'].value_counts().plot(kind='pie', autopct = pct_more_than_1, labels=None, figsize=(15,15), title='Discipline(s)')
-plt.legend(df['Discipline(s)'].unique())
+plt.legend(df['Discipline(s)'].value_counts().index.tolist())
 plt.savefig('test.png')
 print(df['Discipline(s)'].unique())
