@@ -7,7 +7,7 @@ import csv
 import re
 # constants
 DOWNLOADS = 'downloads'
-COLUMN_NAMES = ['Page', 'Title', 'Translated title', 'Date of defense', 'Advisor(s)',
+COLUMN_NAMES = ['Page', 'Title', 'Translated title', 'Date of defense', 'Advisor(s)', 'Rameau keyword(s)',
                 "Committee's member(s)", 'Funders', 'Author', 'Language', 'Number of pages',
                 'Keywords', 'Name of the research project', 'Research unit', 'Target public',
                 'Discipline(s)', 'Institution(s)', 'Degree', 'Faculty', 'Commentary', 'Complementary URL',
@@ -62,9 +62,9 @@ def append_row(dict_rows, csv_path=f"{DOWNLOADS}/data.csv"):
             for data in dict_rows:
                 try:
                     csv_writer.writerow(data)
-                except ValueError:
+                except ValueError as e:
                     print('ValueError')
-                    print(data)
+                    print(e)
 
     except IOError:
         print('I/O Error occurred')
@@ -130,17 +130,19 @@ def parse(page_num, dict):
 
 
 def parse_to_csv(page_num, dict):
+    print(page_num)
     try:
         page = urlopen(f"https://matheo.uliege.be/handle/2268.2/{page_num}")
-    except URLError:
+    except URLError as e:
         print("Something went wrong. falling back to the next page")
+        print(e)
         return
 
     soup = BeautifulSoup(page, 'html.parser')
-    print(soup)
     try:
         person_name = extract_name(soup)
     except:
+        print('no data')
         return False
 
     dict['Page'] = page_num
@@ -183,7 +185,7 @@ def iterate(page_num):
         page_num += 1
 
 
-def iterate_csv_only(page_num=1118):
+def iterate_csv_only(page_num=1):
     with open(f"{DOWNLOADS}/data.csv", 'r') as csv_doc:
         csv_reader = csv.reader(csv_doc)
 
@@ -191,9 +193,9 @@ def iterate_csv_only(page_num=1118):
         for row in csv_reader:
             if row[0] != 'Page':
                 written_pages.append(row[0])
-
+        print(written_pages)
     while page_num <= 8725:
-        if page_num not in written_pages:
+        if str(page_num) not in written_pages:
             parse_to_csv(page_num, {})
         page_num += 1
 
