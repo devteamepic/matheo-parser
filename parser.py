@@ -28,12 +28,12 @@ def download_file(path, url, mode='wb'):
         open(path, mode).write(requests.get(url).content)
 
 
-def create_file(path=f"{DOWNLOADS}/data.csv"):
+def create_file(path=f"{DOWNLOADS}/data-all-theses.csv"):
     if not os.path.exists(path):
         open(path, 'w+')
 
 
-def new_data(dict_array, csv_path=f"{DOWNLOADS}/data.csv"):
+def new_data(dict_array, csv_path=f"{DOWNLOADS}/data-all-theses.csv"):
     try:
         with open(csv_path, 'r') as csv_doc:
             csv_reader = csv.reader(csv_doc)
@@ -53,7 +53,7 @@ def new_data(dict_array, csv_path=f"{DOWNLOADS}/data.csv"):
         print('IOError occurred while reading csv file')
 
 
-def append_row(dict_rows, csv_path=f"{DOWNLOADS}/data.csv"):
+def append_row(dict_rows, csv_path=f"{DOWNLOADS}/data-all-theses.csv"):
     try:
         with open(csv_path, 'a') as csv_doc:
 
@@ -186,7 +186,7 @@ def iterate(page_num):
 
 
 def iterate_csv_only(page_num=1):
-    with open(f"{DOWNLOADS}/data.csv", 'r') as csv_doc:
+    with open(f"{DOWNLOADS}/data-all-theses.csv", 'r') as csv_doc:
         csv_reader = csv.reader(csv_doc)
 
         written_pages = []
@@ -194,16 +194,16 @@ def iterate_csv_only(page_num=1):
             if row[0] != 'Page':
                 written_pages.append(row[0])
         print(written_pages)
-    while page_num <= 8725:
+    while page_num <= 9000:
         if str(page_num) not in written_pages:
             parse_to_csv(page_num, {})
         page_num += 1
 
 
-if not os.path.exists(f"{DOWNLOADS}/data.csv"):
-    create_file(f"{DOWNLOADS}/data.csv")
+if not os.path.exists(f"{DOWNLOADS}/data-all-theses.csv"):
+    create_file(f"{DOWNLOADS}/data-all-theses.csv")
     try:
-        with open(f"{DOWNLOADS}/data.csv", 'a') as doc:
+        with open(f"{DOWNLOADS}/data-all-theses.csv", 'a') as doc:
             writer = csv.DictWriter(doc, fieldnames=COLUMN_NAMES)
             writer.writeheader()
     except IOError:
