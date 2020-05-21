@@ -1,6 +1,6 @@
 import csv
 
-with open(f"downloads/data.csv", 'r') as csv_doc:
+with open(f"downloads/data-all-theses.csv", 'r') as csv_doc:
     csv_reader = csv.reader(csv_doc)
 
     written_pages = []
